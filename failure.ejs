@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Failed</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'stripe-purple': '#5469d4',
+            'stripe-dark': '#32325d',
+            'stripe-light': '#f6f9fc',
+            'error-red': '#fa755a',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+  <div class="max-w-4xl mx-auto p-4 flex justify-center items-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg text-center">
+      <div class="mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" class="mx-auto">
+          <circle cx="12" cy="12" r="11" fill="#fa755a"/>
+          <path fill="#FFFFFF" d="M13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29-4.3 4.29a1 1 0 0 0 1.42 1.42l4.29-4.3 4.29 4.3a1 1 0 0 0 1.42-1.42L13.41 12z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl text-error-red font-bold mb-6">Payment Failed</h1>
+      <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+        <p class="text-gray-700 mb-2">Error: <span class="font-medium text-error-red"><%= errorMessage || 'Your payment could not be processed' %></span></p>
+        <p class="text-gray-700">Time: <span class="font-medium"><%= new Date().toLocaleString() %></span></p>
+      </div>
+      <p class="text-gray-600 mb-5">There was an issue processing your payment. Please try again with a different payment method or contact customer support.</p>
+      <a href="/" class="inline-block bg-stripe-purple hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-md cursor-pointer transition-colors text-base">Try Again</a>
+    </div>
+  </div>
+</body>
+</html> 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'stripe-purple': '#5469d4',
+            'stripe-dark': '#32325d',
+            'stripe-light': '#f6f9fc',
+            'error-red': '#fa755a',
+            'success-green': '#4CAF50'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+  <div class="max-w-4xl mx-auto p-4 flex justify-center items-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg text-center">
+      <div class="mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" class="mx-auto">
+          <circle cx="12" cy="12" r="11" fill="#4CAF50"/>
+          <path fill="#FFFFFF" d="M9.5 15.5l-4-4 1.5-1.5 2.5 2.5 6-6 1.5 1.5z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl text-success-green font-bold mb-6">Payment Successful!</h1>
+      <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+        <p class="text-gray-700 mb-2">Transaction ID: <span class="font-medium">#<%= transactionId %></span></p>
+        <p class="text-gray-700 mb-2">Amount: <span class="font-medium">$<%= amount %></span></p>
+        <p class="text-gray-700">Date: <span class="font-medium"><%= new Date().toLocaleString() %></span></p>
+      </div>
+      <p class="text-gray-600 mb-2">Your payment has been processed successfully.</p>
+      <p class="text-gray-600">A confirmation has been sent to your email.</p>
+    </div>
+  </div>
+</body>
+</html> 
