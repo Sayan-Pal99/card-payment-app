@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Secure payment processing page">
+  <title>Card Payment Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'stripe-purple': '#5469d4',
+            'stripe-dark': '#32325d',
+            'stripe-light': '#f6f9fc',
+            'error-red': '#fa755a',
+            'success-green': '#4CAF50'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .stripe-input {
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      background-color: white;
+      height: 42px;
+      transition-property: color, background-color, border-color;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+    
+    .stripe-input.StripeElement--focus {
+      outline: none;
+      border-color: #5469d4;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .stripe-input.StripeElement--invalid {
+      border-color: #fa755a;
+    }
+    
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 4px solid #e5e7eb;
+      border-top-color: #5469d4;
+      border-radius: 9999px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 0.5rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .card-fieldset {
+      position: relative;
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+      border: 2px solid #f6f9fc;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .card-fieldset legend {
+      position: absolute;
+      top: -1rem;
+      left: 0.75rem;
+      padding: 0 0.5rem;
+      font-weight: 500;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      color: #32325d;
+      background-color: #fff;
+    }
+    
+    .card-icon {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      color: #5469d4;
+      opacity: 0.2;
+    }
+  </style>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="/js/payment.js" defer></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+  <div class="max-w-4xl mx-auto p-4 flex justify-center items-center min-h-screen">
+    <form class="bg-white rounded-lg shadow-lg p-6 md:p-8 w-full max-w-lg" id="payment-form" data-stripe-key="<%= stripePublicKey %>">
+      <h1 class="text-2xl text-center text-stripe-dark font-semibold mb-8">Payment Details</h1>
+      
+      <div class="mb-6">
+        <label for="amount" class="block mb-2 font-medium text-stripe-dark">Amount ($)</label>
+        <div class="flex items-center border border-gray-300 rounded-md overflow-hidden">
+          <span class="px-3 py-2 bg-stripe-light text-stripe-dark border-r border-gray-300">$</span>
+          <input 
+            type="number" 
+            id="amount" 
+            name="amount"
+            min="1" 
+            step="0.01" 
+            value="10.00" 
+            class="w-full py-2 px-3 focus:outline-none focus:ring-1 focus:ring-stripe-purple text-base"
+            required
+            aria-describedby="amount-error"
+          >
+        </div>
+        <div id="amount-error" class="text-error-red text-sm mt-1 hidden"></div>
+      </div>
+      
+      <fieldset class="card-fieldset">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+          </svg>
+        </div>
+        
+        <div class="mb-5">
+          <label for="card-number" class="block mb-2 font-medium text-stripe-dark">Card Number</label>
+          <div id="card-number" class="stripe-input" aria-label="Credit card number field"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+          <div>
+            <label for="card-expiry" class="block mb-2 font-medium text-stripe-dark">Expiration Date</label>
+            <div id="card-expiry" class="stripe-input" aria-label="Credit card expiration date field"></div>
+          </div>
+          <div>
+            <label for="card-cvc" class="block mb-2 font-medium text-stripe-dark">CVC</label>
+            <div id="card-cvc" class="stripe-input" aria-label="Credit card CVC security code field"></div>
+          </div>
+        </div>
+        
+        <div class="mb-5">
+          <label for="card-name" class="block mb-2 font-medium text-stripe-dark">Cardholder Name</label>
+          <input 
+            type="text" 
+            id="card-name" 
+            name="card-name"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-stripe-purple focus:ring-1 focus:ring-stripe-purple" 
+            placeholder="John Doe" 
+            autocomplete="cc-name"
+            required
+          >
+        </div>
+        
+        <div class="mb-3">
+          <label for="postal-code" class="block mb-2 font-medium text-stripe-dark">ZIP / Postal Code</label>
+          <input 
+            type="text" 
+            id="postal-code" 
+            name="postal-code"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-stripe-purple focus:ring-1 focus:ring-stripe-purple" 
+            placeholder="123456" 
+            autocomplete="postal-code"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            aria-describedby="postal-code-help"
+            required
+          >
+          <p id="postal-code-help" class="text-xs text-gray-500 mt-1">Enter your 6-digit postal code</p>
+        </div>
+        
+        <div id="card-errors" role="alert" class="text-error-red text-sm mt-2 min-h-[20px]" aria-live="polite"></div>
+      </fieldset>
+      
+      <button 
+        type="submit" 
+        id="submit-payment" 
+        class="w-full bg-stripe-purple hover:bg-opacity-90 text-white font-semibold py-3 px-4 rounded-md cursor-pointer transition-colors text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stripe-purple"
+      >
+        Pay Now
+      </button>
+      
+      <div class="mt-5 text-center">
+        <div id="payment-processing" class="hidden" aria-hidden="true">
+          <div class="spinner" role="status" aria-label="Processing payment"></div>
+          <p class="text-gray-700">Processing payment...</p>
+        </div>
+        <div id="payment-error" class="hidden" aria-live="assertive">
+          <p id="error-message" class="text-error-red"></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html> 
